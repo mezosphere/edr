@@ -335,7 +335,7 @@ dependencies = [
  "either",
  "futures",
  "futures-utils-wasm",
- "lru 0.13.0",
+ "lru",
  "parking_lot 0.12.3",
  "pin-project",
  "serde",
@@ -3167,7 +3167,7 @@ dependencies = [
  "k256",
  "lazy_static",
  "log",
- "lru 0.12.5",
+ "lru",
  "parking_lot 0.12.3",
  "paste",
  "rand 0.9.1",
@@ -5477,15 +5477,6 @@ name = "log"
 version = "0.4.27"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "13dc2df351e3202783a1fe0d44375f7295ffb4049267b0f3018346dc122a1d94"
-
-[[package]]
-name = "lru"
-version = "0.12.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "234cf4f4a04dc1f57e24b96cc0cd600cf2af460d4161ac5ecdd0af8e1f3b2a38"
-dependencies = [
- "hashbrown 0.15.2",
-]
 
 [[package]]
 name = "lru"
