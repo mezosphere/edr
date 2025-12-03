@@ -75,6 +75,8 @@ use lru::LruCache;
 use rpds::HashTrieMapSync;
 use tokio::runtime;
 
+use edr_state_api::{State, StateDebug};
+
 use crate::{
     data::gas::{compute_rewards, BinarySearchEstimationArgs, CheckGasLimitArgs},
     debug_mine::{
@@ -93,7 +95,7 @@ use crate::{
     mock::SyncCallOverride,
     observability::{EvmObserver, EvmObserverConfig, ObservabilityConfig},
     pending::BlockchainWithPending,
-    requests::hardhat::rpc_types::ForkMetadata,
+    requests::hardhat::rpc_types::{ForkMetadata, StateAccount, StateDump},
     snapshot::Snapshot,
     spec::{
         ForkedBlockchainForChainSpec, LocalBlockchainForChainSpec, ProviderSpec,
@@ -1101,6 +1103,94 @@ where
             .apply_account_change(address, account_info.clone());
 
         self.add_state_to_cache(modified_state, block_number);
+
+        Ok(())
+    }
+
+    /// Dumps the current state of all accounts in Anvil-compatible format.
+    pub fn dump_state(&mut self) -> Result<StateDump, ProviderErrorForChainSpec<ChainSpecT>> {
+        let state = self.current_state()?;
+
+        // Use the serialize method to get all accounts, then convert to Anvil format
+        let serialized = state.serialize();
+
+        // Parse the serialized state - it's a BTreeMap<Address, StateAccount> format
+        #[derive(serde::Deserialize)]
+        struct SerializedAccount {
+            balance: U256,
+            code_hash: B256,
+            nonce: u64,
+            storage: std::collections::BTreeMap<B256, U256>,
+            #[allow(dead_code)]
+            storage_root: B256,
+        }
+
+        let serialized_state: std::collections::BTreeMap<Address, SerializedAccount> =
+            serde_json::from_str(&serialized).map_err(ProviderError::Serialization)?;
+
+        let mut dump = StateDump::new();
+
+        for (address, account) in serialized_state {
+            // Look up the code by hash
+            let code = if account.code_hash != KECCAK_EMPTY {
+                let bytecode = state.code_by_hash(account.code_hash)?;
+                bytecode.original_bytes()
+            } else {
+                Bytes::new()
+            };
+
+            // Convert storage from BTreeMap<B256, U256> to HashMap<U256, U256>
+            let storage: HashMap<U256, U256> = account
+                .storage
+                .into_iter()
+                .map(|(k, v)| (U256::from_be_bytes(k.0), v))
+                .collect();
+
+            let state_account = StateAccount {
+                balance: account.balance,
+                code,
+                nonce: U256::from(account.nonce),
+                storage,
+            };
+
+            dump.add_account(address, state_account);
+        }
+
+        Ok(dump)
+    }
+
+    /// Loads state from an Anvil-compatible state dump, merging with existing state.
+    pub fn load_state(
+        &mut self,
+        state_dump: StateDump,
+    ) -> Result<(), ProviderErrorForChainSpec<ChainSpecT>> {
+        for (address, account) in state_dump.accounts {
+            // Set balance
+            self.set_balance(address, account.balance)?;
+
+            // Set nonce (convert U256 to u64)
+            let nonce: u64 = account.nonce.try_into().unwrap_or(u64::MAX);
+            if nonce > 0 {
+                // Only set nonce if it's greater than 0 (set_nonce validates against current)
+                let current_nonce = self
+                    .current_state()?
+                    .basic(address)?
+                    .map_or(0, |acc| acc.nonce);
+                if nonce > current_nonce {
+                    self.set_nonce(address, nonce)?;
+                }
+            }
+
+            // Set code if non-empty
+            if !account.code.is_empty() {
+                self.set_code(address, account.code)?;
+            }
+
+            // Set storage slots
+            for (index, value) in account.storage {
+                self.set_account_storage_slot(address, index, value)?;
+            }
+        }
 
         Ok(())
     }

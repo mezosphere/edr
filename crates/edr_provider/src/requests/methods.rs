@@ -373,6 +373,12 @@ pub enum MethodInvocation<ChainSpecT: RpcChainSpec> {
         with = "edr_eth::serde::sequence"
     )]
     StopImpersonatingAccount(RpcAddress),
+    /// `hardhat_dumpState`
+    #[serde(rename = "hardhat_dumpState", with = "edr_eth::serde::empty_params")]
+    DumpState(()),
+    /// `hardhat_loadState`
+    #[serde(rename = "hardhat_loadState", with = "edr_eth::serde::sequence")]
+    LoadState(super::hardhat::rpc_types::StateDump),
 }
 
 impl<ChainSpecT: RpcChainSpec> MethodInvocation<ChainSpecT> {
@@ -453,6 +459,8 @@ impl<ChainSpecT: RpcChainSpec> MethodInvocation<ChainSpecT> {
             MethodInvocation::SetPrevRandao(_) => "hardhat_setPrevRandao",
             MethodInvocation::SetStorageAt(_, _, _) => "hardhat_setStorageAt",
             MethodInvocation::StopImpersonatingAccount(_) => "hardhat_stopImpersonatingAccount",
+            MethodInvocation::DumpState(_) => "hardhat_dumpState",
+            MethodInvocation::LoadState(_) => "hardhat_loadState",
         }
     }
 }

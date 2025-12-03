@@ -113,3 +113,40 @@ fn serde_hardhat_stop_impersonating_account() {
         Address::random().into(),
     ));
 }
+
+#[test]
+fn serde_hardhat_dump_state() {
+    help_test_method_invocation_serde(MethodInvocation::<L1ChainSpec>::DumpState(()));
+
+    // Test JSON deserialization
+    let json = r#"{"jsonrpc":"2.0","method":"hardhat_dumpState","params":[],"id":1}"#;
+    let deserialized: MethodInvocation<L1ChainSpec> = serde_json::from_str(json)
+        .unwrap_or_else(|_| panic!("should have successfully deserialized json {json}"));
+    assert_eq!(MethodInvocation::DumpState(()), deserialized);
+}
+
+#[test]
+fn serde_hardhat_load_state() {
+    use edr_primitives::HashMap;
+    use edr_provider::hardhat_rpc_types::{StateAccount, StateDump};
+
+    let mut accounts = HashMap::default();
+    accounts.insert(
+        Address::from(U160::from(1)),
+        StateAccount {
+            balance: U256::from(1000),
+            code: Bytes::from(&b"code"[..]),
+            nonce: U256::from(1),
+            storage: HashMap::default(),
+        },
+    );
+    let state_dump = StateDump { accounts };
+
+    help_test_method_invocation_serde(MethodInvocation::<L1ChainSpec>::LoadState(state_dump));
+
+    // Test JSON deserialization with empty state
+    let json = r#"{"jsonrpc":"2.0","method":"hardhat_loadState","params":[{"accounts":{}}],"id":1}"#;
+    let deserialized: MethodInvocation<L1ChainSpec> = serde_json::from_str(json)
+        .unwrap_or_else(|_| panic!("should have successfully deserialized json {json}"));
+    assert!(matches!(deserialized, MethodInvocation::LoadState(_)));
+}

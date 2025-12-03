@@ -4,6 +4,8 @@ use crate::{
     data::ProviderData, spec::SyncProviderSpec, time::TimeSinceEpoch, ProviderErrorForChainSpec,
 };
 
+use super::rpc_types::StateDump;
+
 pub fn handle_set_balance<ChainSpecT: SyncProviderSpec<TimerT>, TimerT: Clone + TimeSinceEpoch>(
     data: &mut ProviderData<ChainSpecT, TimerT>,
     address: Address,
@@ -45,5 +47,19 @@ pub fn handle_set_storage_at<
 ) -> Result<bool, ProviderErrorForChainSpec<ChainSpecT>> {
     data.set_account_storage_slot(address, index, value)?;
 
+    Ok(true)
+}
+
+pub fn handle_dump_state<ChainSpecT: SyncProviderSpec<TimerT>, TimerT: Clone + TimeSinceEpoch>(
+    data: &mut ProviderData<ChainSpecT, TimerT>,
+) -> Result<StateDump, ProviderErrorForChainSpec<ChainSpecT>> {
+    data.dump_state()
+}
+
+pub fn handle_load_state<ChainSpecT: SyncProviderSpec<TimerT>, TimerT: Clone + TimeSinceEpoch>(
+    data: &mut ProviderData<ChainSpecT, TimerT>,
+    state_dump: StateDump,
+) -> Result<bool, ProviderErrorForChainSpec<ChainSpecT>> {
+    data.load_state(state_dump)?;
     Ok(true)
 }

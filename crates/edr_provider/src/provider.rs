@@ -462,6 +462,11 @@ impl<
                 hardhat::handle_stop_impersonating_account_request(data, *address)
                     .and_then(to_json::<_, ChainSpecT, TimerT>)
             }
+            MethodInvocation::DumpState(()) => {
+                hardhat::handle_dump_state(data).and_then(to_json::<_, ChainSpecT, TimerT>)
+            }
+            MethodInvocation::LoadState(state_dump) => hardhat::handle_load_state(data, state_dump)
+                .and_then(to_json::<_, ChainSpecT, TimerT>),
         };
 
         if let Some(method_name) = method_name {
