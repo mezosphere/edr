@@ -199,7 +199,7 @@ foundry-evm-traces = { path = "crates/foundry/evm/traces" }
 
 # solc & compilation utilities
 foundry-block-explorers = { version = "0.18.0", default-features = false }
-foundry-compilers = { version = "0.18.0", default-features = false, features = [
+foundry-compilers = { version = "0.19.10", default-features = false, features = [
     "svm-solc",
 ] }
 
