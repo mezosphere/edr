@@ -1,6 +1,6 @@
 {
   "name": "@nomicfoundation/edr",
-  "version": "0.12.0-next.16",
+  "version": "0.12.0-state-dump",
   "devDependencies": {
     "@napi-rs/cli": "^2.18.4",
     "@nomicfoundation/ethereumjs-util": "^9.0.4",
@@ -74,7 +74,7 @@
     "test": "node --max-old-space-size=8192 node_modules/mocha/bin/_mocha --recursive \"test/**/*.ts\"",
     "testNoBuild": "node --max-old-space-size=8192 node_modules/mocha/bin/_mocha --recursive \"test/**/{,!(logs|mock)}.ts\"",
     "universal": "napi universal",
-    "version": "napi version"
+    "version": "0.12.0-state-dump"
   },
   "types": "index.d.ts"
 }

@@ -53,7 +53,7 @@ export const L1_CHAIN_TYPE: string
 export declare function l1GenesisState(hardfork: SpecId): Array<AccountOverride>
 export declare function l1ProviderFactory(): ProviderFactory
 /** Identifier for the Ethereum spec. */
-export enum SpecId {
+export const enum SpecId {
   /** Frontier */
   Frontier = 0,
   /** Frontier Thawing */
@@ -129,7 +129,7 @@ export const CANCUN: string
 export const PRAGUE: string
 export const OSAKA: string
 /** Enumeration of supported OP hardforks. */
-export enum OpHardfork {
+export const enum OpHardfork {
   Bedrock = 100,
   Regolith = 101,
   Canyon = 102,
@@ -247,7 +247,7 @@ export interface HardforkActivationByTimestamp {
   timestamp: bigint
 }
 /**The type of ordering to use when selecting blocks to mine. */
-export enum MineOrdering {
+export const enum MineOrdering {
   /**Insertion order */
   Fifo = 'Fifo',
   /**Effective miner fee */
@@ -402,7 +402,7 @@ export interface ContractGasReport {
   deployments: Array<DeploymentGasReport>
   functions: Record<string, Array<FunctionGasReport>>
 }
-export enum GasReportExecutionStatus {
+export const enum GasReportExecutionStatus {
   Success = 0,
   Revert = 1,
   Halt = 2
@@ -468,7 +468,7 @@ export interface LoggerConfig {
  */
 export declare function precompileP256Verify(): Precompile
 /** The possible reasons for successful termination of the EVM. */
-export enum SuccessReason {
+export const enum SuccessReason {
   /** The opcode `STOP` was called */
   Stop = 0,
   /** The opcode `RETURN` was called */
@@ -510,7 +510,7 @@ export interface RevertResult {
  * Indicates that the EVM has experienced an exceptional halt. This causes
  * execution to immediately end with all gas being consumed.
  */
-export enum ExceptionalHalt {
+export const enum ExceptionalHalt {
   OutOfGas = 0,
   OpcodeNotFound = 1,
   InvalidFEOpcode = 2,
@@ -865,14 +865,14 @@ export interface StorageCachingConfig {
   endpoints: CachedEndpoints | string
 }
 /** What chains to cache */
-export enum CachedChains {
+export const enum CachedChains {
   /** Cache all chains */
   All = 0,
   /** Don't cache anything */
   None = 1
 }
 /** What endpoints to enable caching for */
-export enum CachedEndpoints {
+export const enum CachedEndpoints {
   /** Cache all endpoints */
   All = 0,
   /** Only cache non-local host endpoints */
@@ -899,7 +899,7 @@ export interface PathPermission {
  * configuration files, source files or executables neither in the top level
  * directory, nor in any subdirectories.
 */
-export enum FsAccessPermission {
+export const enum FsAccessPermission {
   /** Allows reading and writing the file */
   ReadWriteFile = 0,
   /** Only allows reading the file */
@@ -923,7 +923,7 @@ export interface AddressLabel {
   label: string
 }
 /** A type that controls when stack traces are collected. */
-export enum CollectStackTraces {
+export const enum CollectStackTraces {
   /** Always collects stack traces, adding performance overhead. */
   Always = 0,
   /**
@@ -939,7 +939,7 @@ export enum CollectStackTraces {
  * Configuration for [`SolidityTestRunnerConfigArgs::include_traces`] that
  * controls execution trace decoding and inclusion in test results.
  */
-export enum IncludeTraces {
+export const enum IncludeTraces {
   /** No traces will be included in any test result. */
   None = 0,
   /** Traces will be included only on the results of failed tests. */
@@ -1010,7 +1010,7 @@ export interface UnsafeToReplay {
   impureCheatcodes: Array<string>
 }
 /**The result of a test execution. */
-export enum TestStatus {
+export const enum TestStatus {
   /**Test success */
   Success = 'Success',
   /**Test failure */
@@ -1138,7 +1138,7 @@ export interface LogTrace {
   parameters: DecodedTraceParameters | Array<Uint8Array>
 }
 /** The various kinds of call frames possible in the EVM. */
-export enum CallKind {
+export const enum CallKind {
   /** Regular call that may change state. */
   Call = 0,
   /**
@@ -1154,7 +1154,7 @@ export enum CallKind {
   Create = 4
 }
 /** Kind marker for log traces. */
-export enum LogKind {
+export const enum LogKind {
   /** Single kind of log. */
   Log = 5
 }
@@ -1185,7 +1185,7 @@ export interface SubscriptionEvent {
 export declare function linkHexStringBytecode(code: string, address: string, position: number): string
 export declare function printStackTrace(trace: SolidityStackTrace): void
 /** Represents the exit code of the EVM. */
-export enum ExitCode {
+export const enum ExitCode {
   /** Execution was successful. */
   SUCCESS = 0,
   /** Execution was reverted. */
@@ -1205,7 +1205,7 @@ export enum ExitCode {
   /** Unknown halt reason. */
   UNKNOWN_HALT_REASON = 8
 }
-export enum ContractFunctionType {
+export const enum ContractFunctionType {
   CONSTRUCTOR = 0,
   FUNCTION = 1,
   FALLBACK = 2,
@@ -1214,7 +1214,7 @@ export enum ContractFunctionType {
   MODIFIER = 5,
   FREE_FUNCTION = 6
 }
-export enum StackTraceEntryType {
+export const enum StackTraceEntryType {
   CALLSTACK_ENTRY = 0,
   UNRECOGNIZED_CREATE_CALLSTACK_ENTRY = 1,
   UNRECOGNIZED_CONTRACT_CALLSTACK_ENTRY = 2,
